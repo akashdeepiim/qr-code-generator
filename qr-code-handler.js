@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 
 const generateQRCode = async (url, color, logoPath) => {
-  const outputPath = `qr-${Date.now()}.png`; // Unique file name for QR code
+  const outputPath = path.resolve(`./tmp`) + `/qr-${Date.now()}.png`; // Unique file name for QR code
   const PADDING_PERCENTAGE = 0.03; // 10% padding around the logo
 
   try {
