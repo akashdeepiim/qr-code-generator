@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inspirit QR Code Generator</title>
+  <!-- Import Google Fonts -->
+  <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap"
+          rel="stylesheet"
+  />
+  <style>
+    /* General body and layout styles */
+    body {
+      font-family: "Space Grotesk", "Inter", Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Form container styling */
+    .form-container {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+
+    /* Logo styling */
+    .logo-container {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .logo-container img {
+      max-width: 150px;
+      height: auto;
+    }
+
+    /* Header */
+    h1 {
+      text-align: center;
+      color: #4836e7;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    /* Form input and labels */
+    label {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: block;
+      color: #555;
+      font-weight: 600;
+      font-family: "Inter", Arial, sans-serif;
+    }
+
+    input[type="url"],
+    input[type="color"],
+    input[type="file"] {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0 1.5rem;
+      border: 1px solid #c8c6fc;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: "Inter", Arial, sans-serif;
+      box-sizing: border-box;
+    }
+
+    input[type="color"] {
+      padding: 0.4rem;
+      height: 50px;
+    }
+
+    /* Submit button */
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      font-family: "Inter", Arial, sans-serif;
+      font-weight: 600;
+      color: white;
+      background-color: #4836e7;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #372aad;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #777;
+      font-family: "Inter", Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <!-- Logo at the top -->
+  <div class="logo-container">
+    <img
+            src="https://inspiritvr.com/wp-content/uploads/2024/10/Group-85.svg"
+            alt="Inspirit Logo"
+    />
+  </div>
+
+  <h1>Inspirit QR Code Generator</h1>
+  <form action="/generate" method="post" enctype="multipart/form-data">
+    <!-- URL input -->
+    <div>
+      <label for="url">URL:</label>
+      <input
+              type="url"
+              id="url"
+              name="url"
+              required
+              placeholder="Enter the URL for your QR code"
+      />
+    </div>
+
+    <!-- Color picker -->
+    <div>
+      <label for="color">Select QR Code Color (HEX):</label>
+      <input type="color" id="color" name="color" value="#4836E7" />
+    </div>
+
+    <!-- Logo upload -->
+    <div>
+      <label for="logo">Upload a Logo (Optional):</label>
+      <input type="file" id="logo" name="logo" accept="image/*" />
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit">Generate QR Code</button>
+  </form>
+
+  <!-- Footer text -->
+  <div class="footer">
+    <p>Powered by Inspirit QR Code Generator</p>
+  </div>
+</div>
+</body>
+</html>
