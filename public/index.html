@@ -368,18 +368,22 @@
       #canvas-container canvas,
       #canvas-container svg,
       #canvas-container img {
-        max-width: 180px !important;
-        width: 100% !important;
+        max-width: 100% !important;
+        /* Allow it to fill the wrapper up to its natural size */
         height: auto !important;
-        object-fit: contain;
+        display: block;
+        /* Remove inline-block spacing */
       }
 
       /* Wrapper Transform Failsafe */
+      /* Clean Wrapper - No Transforms */
       .canvas-wrapper {
-        transform: scale(0.85);
-        /* Slight shrink to ensure it fits */
-        transform-origin: center top;
         margin-bottom: 0 !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem !important;
+        /* Ensure consistent padding */
       }
 
       .controls-container {
