@@ -20,11 +20,16 @@ const upload = multer({ storage });
 
 // Route for generating the QR code
 app.post("/generate", upload.single("logo"), async (req, res) => {
-  const { url, color } = req.body;
+  const { url, color, style, label, margin, errorCorrection } = req.body;
   const logoPath = req.file ? req.file.path : null;
 
   try {
-    const qrCodePath = await generateQRCode(url, color, logoPath);
+    const qrCodePath = await generateQRCode(url, color, logoPath, {
+        style,
+        label,
+        margin: parseInt(margin) || 1,
+        errorCorrection
+    });
     res.download(qrCodePath); // Download the QR code file
   } catch (error) {
     console.error("Error generating QR code:", error);

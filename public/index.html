@@ -1,160 +1,795 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inspirit QR Code Generator</title>
-  <!-- Import Google Fonts -->
-  <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap"
-          rel="stylesheet"
-  />
+  <title>Akash Deep's Free QR Code Generator</title>
+  <link rel="icon" href="/logo.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <script src="./qr-code-styling.js"></script>
   <style>
     /* General body and layout styles */
     body {
-      font-family: "Space Grotesk", "Inter", Arial, sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
+      font-family: "Inter", sans-serif;
+      background-color: #0d0d0d;
+      color: #e5e5e5;
       margin: 0;
       padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+      box-sizing: border-box;
+      flex: 1;
+    }
+
+    /* Controls container styling */
+    @media (max-width: 768px) {
+      .main-wrapper {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        /* Alignment Fix */
+        padding-bottom: 80px;
+        /* Space for sticky button */
+      }
+    }
+
+    .controls-container {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      height: fit-content;
+    }
+
+    /* Preview container */
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem;
+      background-color: #1a1a1a;
+      border-radius: 16px;
+      border: 1px solid #333;
+      position: sticky;
+      top: 2rem;
+      height: fit-content;
+      /* Preview always first now (Left on Desktop, Top on Mobile) */
+    }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 768px) {
+      .preview-container {
+        position: static;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 2rem;
+        /* Reduce scale slightly to fit better if needed, or just rely on flex */
+      }
+
+      /* Hide Standard Buttons on Mobile */
+      .btn-group {
+        display: none !important;
+      }
+
+      /* Show Mobile Sticky Button */
+      #mobile-download-btn {
+        display: flex !important;
+      }
+    }
+
+    .canvas-wrapper {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    }
+
+    #canvas-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
 
-    /* Form container styling */
-    .form-container {
-      background-color: #ffffff;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 500px;
-      box-sizing: border-box;
-    }
-
-    /* Logo styling */
-    .logo-container {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .logo-container img {
-      max-width: 150px;
-      height: auto;
-    }
-
-    /* Header */
     h1 {
       text-align: center;
-      color: #4836e7;
-      margin-bottom: 1rem;
-      font-size: 2rem;
-      font-family: "Space Grotesk", sans-serif;
+      color: #ffffff;
+      margin-bottom: 0rem;
+      font-size: 1.75rem;
+      font-family: "Outfit", sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
-    /* Form input and labels */
+    .subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
     label {
-      font-size: 1rem;
+      font-size: 0.9rem;
       margin-bottom: 0.5rem;
       display: block;
-      color: #555;
-      font-weight: 600;
-      font-family: "Inter", Arial, sans-serif;
+      color: #bbbbbb;
+      font-weight: 500;
+      font-family: "Inter", sans-serif;
     }
 
     input[type="url"],
     input[type="color"],
-    input[type="file"] {
+    input[type="file"],
+    input[type="text"],
+    input[type="number"],
+    select {
       width: 100%;
-      padding: 0.8rem;
+      padding: 0.9rem;
       margin: 0.5rem 0 1.5rem;
-      border: 1px solid #c8c6fc;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-family: "Inter", Arial, sans-serif;
+      border: 1px solid #333;
+      background-color: #262626;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: "Inter", sans-serif;
       box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    input[type="url"]:focus,
+    input[type="color"]:focus,
+    input[type="file"]:focus,
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #3b82f6;
     }
 
     input[type="color"] {
-      padding: 0.4rem;
-      height: 50px;
+      padding: 0.2rem;
+      height: 48px;
+      cursor: pointer;
     }
 
-    /* Submit button */
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      width: 100%;
+    }
+
     button {
       width: 100%;
-      padding: 0.8rem;
-      font-size: 1rem;
-      font-family: "Inter", Arial, sans-serif;
+      padding: 1rem;
+      font-size: 0.9rem;
+      font-family: "Inter", sans-serif;
       font-weight: 600;
       color: white;
-      background-color: #4836e7;
-      border: none;
-      border-radius: 12px;
+      background: #262626;
+      border: 1px solid #333;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.2s;
     }
 
+    /* ... skipped ... */
+
     button:hover {
-      background-color: #372aad;
+      background-color: #333;
+      border-color: #555;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    button.primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
     }
 
     /* Footer */
     .footer {
       text-align: center;
-      margin-top: 1rem;
-      font-size: 0.85rem;
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: #555;
+      padding-bottom: 2rem;
+    }
+
+    .footer a {
       color: #777;
-      font-family: "Inter", Arial, sans-serif;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover {
+      color: #3b82f6;
+    }
+
+    details {
+      background: #262626;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-bottom: 1.5rem;
+    }
+
+    summary {
+      cursor: pointer;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    /* Mobile Sticky Download Button */
+    #mobile-download-btn {
+      display: none;
+      /* Hidden on Desktop */
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Bottom Sheet Overlay */
+    .bottom-sheet-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 200;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .bottom-sheet-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Bottom Sheet Content */
+    .bottom-sheet {
+      position: fixed;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      background: #1a1a1a;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 2rem 1.5rem;
+      box-sizing: border-box;
+      z-index: 201;
+      transition: bottom 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+      border-top: 1px solid #333;
+    }
+
+    .bottom-sheet.active {
+      bottom: 0;
+    }
+
+    .sheet-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #fff;
+    }
+
+    .sheet-options {
+      display: grid;
+      gap: 1rem;
+    }
+
+    /* SEO Content Section */
+    .seo-content {
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 2rem;
+      color: #ddd;
+      font-family: "Inter", sans-serif;
+      line-height: 1.6;
+
+    }
+
+    .seo-content h2 {
+      color: #fff;
+      margin-top: 2rem;
+      font-size: 1.5rem;
+    }
+
+    .seo-content p {
+      margin-bottom: 1rem;
+      color: #aaa;
+    }
+
+    .seo-content ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      color: #aaa;
+      margin-bottom: 1rem;
+    }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 768px) {
+      .main-wrapper {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+        /* Minimal padding */
+        padding-bottom: 80px;
+        /* Space for sticky button */
+        gap: 0.5rem;
+        /* Tighter gap between Preview and Controls */
+      }
+
+      .preview-container {
+        position: static;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 0.5rem;
+        /* Minimal margin */
+        padding: 0.5rem !important;
+        /* Minimal padding */
+        background: transparent;
+        border: none;
+        display: flex;
+        /* Center content */
+        justify-content: center;
+        /* Removed transform: scale(0.9) to fix rendering issues */
+      }
+
+      /* Force Canvas Size on Mobile */
+      #canvas-container canvas,
+      #canvas-container svg {
+        max-width: 180px !important;
+        height: auto !important;
+      }
+
+      .controls-container {
+        padding: 0.75rem !important;
+        /* Reduced from 2rem */
+        order: 1;
+        /* Push controls below preview on mobile */
+      }
+
+      /* Compact Header for Mobile */
+      .branding-wrapper {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 0.25rem !important;
+      }
+
+      .branding-wrapper img {
+        width: 32px !important;
+        /* Tiny logo */
+      }
+
+      .branding-wrapper h1 {
+        font-size: 1.1rem !important;
+        /* Tiny title */
+        margin: 0 !important;
+        text-align: left;
+      }
+
+      .subtitle {
+        display: none;
+        /* Strongly hide subtitle */
+      }
+
+      /* Compact Inputs */
+      input[type="url"],
+      input[type="color"],
+      input[type="file"],
+      input[type="text"],
+      input[type="number"],
+      select {
+        margin: 0.25rem 0 0.5rem;
+        /* Very tight spacing */
+        padding: 10px;
+        font-size: 16px;
+        min-height: 44px;
+        /* Maintain touch target */
+      }
+
+      label {
+        margin-bottom: 0.1rem;
+        font-size: 0.85rem;
+      }
+
+      /* Hide Standard Buttons on Mobile */
+      .btn-group {
+        display: none !important;
+      }
+
+      /* Show Mobile Sticky Button */
+      #mobile-download-btn {
+        display: flex !important;
+      }
+
+
+
     }
   </style>
 </head>
+
 <body>
-<div class="form-container">
-  <!-- Logo at the top -->
-  <div class="logo-container">
-    <img
-            src="https://inspiritvr.com/wp-content/uploads/2024/10/Group-85.svg"
-            alt="Inspirit Logo"
-    />
+
+  <main class="main-wrapper">
+    <!-- Branding Wrapper (Full Width Header) -->
+    <div class="branding-wrapper" style="text-align: center; margin-bottom: 2rem; grid-column: 1 / -1;">
+      <img src="/logo.png" alt="Akash Deep Logo" style="width: 60px; border-radius: 8px;" />
+      <h1>Create Free QR Codes</h1>
+    </div>
+
+    <!-- LEFT: Controls -->
+    <section class="controls-container" aria-label="QR Code Customization Controls">
+
+
+
+      <p class="subtitle">Free, Custom, & High Quality. No Ads. Forever.</p>
+
+
+
+
+
+
+      <!-- URL input -->
+      <div>
+        <label for="url">Target URL</label>
+        <input type="url" id="url" placeholder="https://example.com" />
+      </div>
+
+      <!-- Color picker -->
+      <div>
+        <label for="color">QR Color Tone</label>
+        <input type="color" id="color" value="#3b82f6" />
+      </div>
+
+
+      <!-- Advanced Settings Toggle -->
+      <details>
+        <summary>Advanced Settings</summary>
+        <div style="margin-top: 1rem;">
+          <!-- Style -->
+          <label for="style">Pattern Style</label>
+          <select id="style">
+            <option value="square">Classic Square</option>
+            <option value="dots" selected>Modern Dots</option>
+            <option value="rounded">Rounded</option>
+            <option value="extra-rounded">Extra Rounded</option>
+            <option value="classy">Classy</option>
+            <option value="classy-rounded">Classy Rounded</option>
+          </select>
+
+          <!-- Label -->
+          <label for="label">Bottom Label (Optional)</label>
+          <input type="text" id="label" placeholder="e.g. Scan Me">
+
+          <!-- Margin -->
+          <label for="margin">Margin Size</label>
+          <input type="number" id="margin" value="0" min="0" max="100">
+
+          <!-- Error Correction -->
+          <label for="errorCorrection">Error Correction</label>
+          <select id="errorCorrection">
+            <option value="L">L (Low)</option>
+            <option value="M">M (Medium)</option>
+            <option value="Q" selected>Q (Quartile)</option>
+            <option value="H">H (High)</option>
+          </select>
+        </div>
+      </details>
+
+      <!-- Logo upload -->
+      <div>
+        <label for="logo">Custom Overlay Logo (Optional)</label>
+        <input type="file" id="logo" accept="image/*" />
+      </div>
+    </section>
+
+    <!-- RIGHT: Preview -->
+    <section class="preview-container" aria-label="Live QR Code Preview">
+      <h2 style="color: #fff; margin-top: 0; font-size: 1.25rem;">Live Preview</h2>
+      <div class="canvas-wrapper">
+        <div id="canvas-container" role="img" aria-label="Generated QR Code Preview"></div>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="downloadQR('png')">Save PNG</button>
+        <button onclick="downloadQR('jpeg')">Save JPG</button>
+        <button onclick="downloadQR('svg')">Save SVG</button>
+      </div>
+      <p style="font-size: 0.8rem; color: #666; margin-top: 1rem; text-align: center;">
+        * Label text is burned into PNG/JPG only. SVG is standard QR.
+      </p>
+    </section>
+
+    <!-- Mobile Sticky Button -->
+    <button id="mobile-download-btn" class="primary" onclick="toggleBottomSheet(true)">
+      Download QR Code
+    </button>
+  </main>
+
+  <!-- SEO Content Section (Outside Main Grid) -->
+  <section class="seo-content">
+    <h2>What is a QR Code?</h2>
+    <p>A QR (Quick Response) code is a type of matrix barcode that can be scanned using a smartphone camera. It
+      instantly directs users to information such as a website URL, contact details, WiFi network credentials, or
+      plain text.</p>
+
+    <h2>Why use this Free QR Code Generator?</h2>
+    <p>Our tool is designed to be the best free QR code generator on the web. Here's why:</p>
+    <ul>
+      <li><strong>100% Free</strong>: No hidden fees, no credit card required.</li>
+      <li><strong>No Expiration</strong>: The static QR codes you create here never expire.</li>
+      <li><strong>High Quality</strong>: Export in PNG, JPG, or SVG vector format for print.</li>
+      <li><strong>Customizable</strong>: Add your logo, change colors, and choose unique patterns.</li>
+      <li><strong>Privacy Focused</strong>: All generation happens in your browser. No data is stored on our
+        servers.</li>
+    </ul>
+
+    <h2>Supported QR Code Types</h2>
+    <p>Create QR codes for a variety of uses:</p>
+    <ul>
+      <li><strong>URL</strong>: Link directly to websites, landing pages, or social media profiles.</li>
+      <li><strong>WiFi</strong>: Allow guests to connect to your network instantly without typing passwords.</li>
+      <li><strong>Text</strong>: Display a simple message or code.</li>
+      <li><strong>Email</strong>: Pre-fill an email draft to a specific address.</li>
+      <li><strong>Phone</strong>: Trigger a call to a specific number.</li>
+    </ul>
+  </section>
+
+  <!-- Footer (Outside Main Grid) -->
+  <footer class="footer">
+    <p>Designed & Built by <a href="https://akash-deep.com" target="_blank" rel="noopener">Akash Deep</a></p>
+  </footer>
+
+  <!-- Bottom Sheet -->
+  <div class="bottom-sheet-overlay" onclick="toggleBottomSheet(false)"></div>
+  <div class="bottom-sheet">
+    <div class="sheet-title">Select Format</div>
+    <div class="sheet-options">
+      <button onclick="downloadQR('png'); toggleBottomSheet(false)">Save as PNG</button>
+      <button onclick="downloadQR('jpeg'); toggleBottomSheet(false)">Save as JPG</button>
+      <button onclick="downloadQR('svg'); toggleBottomSheet(false)">Save as SVG</button>
+    </div>
+    <button style="margin-top: 1.5rem; background: transparent; border: 1px solid #444;"
+      onclick="toggleBottomSheet(false)">Cancel</button>
   </div>
 
-  <h1>Inspirit QR Code Generator</h1>
-  <form action="/generate" method="post" enctype="multipart/form-data">
-    <!-- URL input -->
-    <div>
-      <label for="url">URL:</label>
-      <input
-              type="url"
-              id="url"
-              name="url"
-              required
-              placeholder="Enter the URL for your QR code"
-      />
-    </div>
+  <script>
+    let qrCode;
+    let uploadedLogo = null;
 
-    <!-- Color picker -->
-    <div>
-      <label for="color">Select QR Code Color (HEX):</label>
-      <input type="color" id="color" name="color" value="#4836E7" />
-    </div>
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      qrCode = new QRCodeStyling({
+        width: 300,
+        height: 300,
+        type: "svg",
+        data: "https://akash-deep.com",
+        image: "",
+        dotsOptions: {
+          color: "#3b82f6",
+          type: "dots"
+        },
+        backgroundOptions: {
+          color: "#ffffff",
+        },
+        imageOptions: {
+          crossOrigin: "anonymous",
+          margin: 5
+        }
+      });
 
-    <!-- Logo upload -->
-    <div>
-      <label for="logo">Upload a Logo (Optional):</label>
-      <input type="file" id="logo" name="logo" accept="image/*" />
-    </div>
+      qrCode.append(document.getElementById("canvas-container"));
 
-    <!-- Submit button -->
-    <button type="submit">Generate QR Code</button>
-  </form>
+      // Setup Listeners for all inputs
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => input.addEventListener('input', updateQR));
 
-  <!-- Footer text -->
-  <div class="footer">
-    <p>Powered by Inspirit QR Code Generator</p>
-  </div>
-</div>
+      // Logo Listener
+      document.getElementById('logo').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            uploadedLogo = event.target.result;
+            updateQR();
+          };
+          reader.readAsDataURL(file);
+        } else {
+          uploadedLogo = null;
+          updateQR();
+        }
+      });
+
+      updateQR(); // Initial render
+    });
+
+
+
+    function updateQR() {
+      // Gather Data
+      const url = document.getElementById('url').value || "https://akash-deep.com";
+      const color = document.getElementById('color').value;
+      const style = document.getElementById('style').value;
+      const margin = parseInt(document.getElementById('margin').value) || 0;
+      const ec = document.getElementById('errorCorrection').value;
+      const labelText = document.getElementById('label').value;
+
+      // Update Label Preview (HTML)
+      let labelPreview = document.getElementById('label-preview');
+      if (!labelPreview) {
+        labelPreview = document.createElement('div');
+        labelPreview.id = 'label-preview';
+        labelPreview.style.marginTop = '10px';
+        labelPreview.style.textAlign = 'center';
+        labelPreview.style.fontFamily = 'Inter, sans-serif';
+        labelPreview.style.fontWeight = '600';
+        labelPreview.style.color = '#333';
+        labelPreview.style.fontSize = '18px';
+        document.getElementById('canvas-container').after(labelPreview);
+      }
+      labelPreview.innerText = labelText;
+
+      const options = {
+        width: 300,
+        height: 300,
+        margin: margin, // Root margin controls QR padding in this library usually
+        type: "svg",
+        data: url,
+        image: uploadedLogo || "",
+        dotsOptions: {
+          color: color,
+          type: style
+        },
+        backgroundOptions: {
+          color: "#ffffff",
+        },
+        cornersSquareOptions: {
+          color: color,
+          type: style === 'dots' ? 'dot' : (style.includes('rounded') ? 'extra-rounded' : 'square')
+        },
+        cornersDotOptions: {
+          color: color,
+          type: style === 'dots' ? 'dot' : 'square'
+        },
+        qrOptions: {
+          errorCorrectionLevel: ec
+        },
+        imageOptions: {
+          crossOrigin: "anonymous",
+          margin: 5 // Logo margin
+        }
+      };
+
+      qrCode.update(options);
+    }
+
+    async function downloadQR(format) {
+      const labelText = document.getElementById('label').value;
+      const extension = format === 'jpeg' ? 'jpg' : format; // Normalize .jpg
+      const filename = `akash-qr-custom.${extension}`;
+      let blob;
+
+      try {
+        if (labelText && format !== 'svg') {
+          // --- Custom Canvas Generation (for Label) ---
+          const rawBlob = await qrCode.getRawData("png");
+          if (!rawBlob) throw new Error("Failed to generate QR blob");
+          const bitmap = await createImageBitmap(rawBlob);
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const padding = 20;
+          const textHeight = 60;
+
+          canvas.width = bitmap.width + (padding * 2);
+          canvas.height = bitmap.height + (padding * 2) + textHeight;
+
+          // White BG
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Draw QR
+          ctx.drawImage(bitmap, padding, padding);
+
+          // Draw Text
+          ctx.font = "bold 24px Inter, sans-serif";
+          ctx.fillStyle = "#000000";
+          ctx.textAlign = "center";
+          ctx.fillText(labelText, canvas.width / 2, canvas.height - 20);
+
+          // Convert Canvas to Blob
+          blob = await new Promise(resolve => canvas.toBlob(resolve, `image/${format}`));
+        } else {
+          // --- Standard Generation (No Label or SVG) ---
+          if (labelText && format === 'svg') {
+            alert("Bottom label is not supported for SVG export yet. Saving standard QR.");
+          }
+          blob = await qrCode.getRawData(format);
+        }
+
+        if (!blob) throw new Error("Could not create file blob.");
+
+        // --- Save File Logic ---
+        // Try the File System Access API (Save As Dialog)
+        if ('showSaveFilePicker' in window) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: filename,
+              types: [{
+                description: `QR Code ${extension.toUpperCase()}`,
+                accept: { [`image/${format === 'svg' ? 'svg+xml' : format}`]: [`.${extension}`] },
+              }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+            return; // Success
+          } catch (err) {
+            if (err.name === 'AbortError') return; // User cancelled
+            console.warn("File Picker failed, falling back to download link.", err);
+          }
+        }
+
+        // Fallback: Anchor Tag
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = url;
+        document.body.appendChild(link); // Firefox requirement
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+      } catch (err) {
+        console.error("Download failed", err);
+        alert("Error saving QR Code: " + err.message);
+      }
+    }
+    function toggleBottomSheet(show) {
+      const overlay = document.querySelector('.bottom-sheet-overlay');
+      const sheet = document.querySelector('.bottom-sheet');
+
+      if (show) {
+        overlay.classList.add('active');
+        // Small delay to allow display:block to apply before transition
+        setTimeout(() => sheet.classList.add('active'), 10);
+      } else {
+        sheet.classList.remove('active');
+        setTimeout(() => overlay.classList.remove('active'), 300);
+      }
+    }
+  </script>
+
 </body>
+
 </html>
