@@ -645,6 +645,13 @@
       });
 
       updateQR(); // Initial render
+
+      // Handle Resize for Responsive QR
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateQR, 100);
+      });
     });
 
 
@@ -675,9 +682,13 @@
       }
       labelPreview.innerText = labelText;
 
+      // Responsive Size Logic
+      const isMobile = window.innerWidth <= 768;
+      const size = isMobile ? 200 : 300;
+
       const options = {
-        width: 300,
-        height: 300,
+        width: size,
+        height: size,
         margin: margin, // Root margin controls QR padding in this library usually
         type: "svg",
         data: url,
