@@ -369,7 +369,17 @@
       #canvas-container svg,
       #canvas-container img {
         max-width: 180px !important;
+        width: 100% !important;
         height: auto !important;
+        object-fit: contain;
+      }
+
+      /* Wrapper Transform Failsafe */
+      .canvas-wrapper {
+        transform: scale(0.85);
+        /* Slight shrink to ensure it fits */
+        transform-origin: center top;
+        margin-bottom: 0 !important;
       }
 
       .controls-container {
