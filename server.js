@@ -4,7 +4,7 @@ const path = require("path");
 const { generateQRCode } = require("./qr-code-handler");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.static("public"));
@@ -25,10 +25,10 @@ app.post("/generate", upload.single("logo"), async (req, res) => {
 
   try {
     const qrCodePath = await generateQRCode(url, color, logoPath, {
-        style,
-        label,
-        margin: parseInt(margin) || 1,
-        errorCorrection
+      style,
+      label,
+      margin: parseInt(margin) || 1,
+      errorCorrection
     });
     res.download(qrCodePath); // Download the QR code file
   } catch (error) {
