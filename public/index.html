@@ -97,6 +97,9 @@
       border-radius: 16px;
       margin-bottom: 2rem;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+      max-width: 100%;
+      box-sizing: border-box;
+      /* Ensure padding doesn't overflow width */
     }
 
     #canvas-container {
@@ -363,7 +366,8 @@
 
       /* Force Canvas Size on Mobile */
       #canvas-container canvas,
-      #canvas-container svg {
+      #canvas-container svg,
+      #canvas-container img {
         max-width: 180px !important;
         height: auto !important;
       }
@@ -655,6 +659,8 @@
         labelPreview.style.fontWeight = '600';
         labelPreview.style.color = '#333';
         labelPreview.style.fontSize = '18px';
+        labelPreview.style.maxWidth = '100%';
+        labelPreview.style.overflowWrap = 'break-word';
         document.getElementById('canvas-container').after(labelPreview);
       }
       labelPreview.innerText = labelText;
